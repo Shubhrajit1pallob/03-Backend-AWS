@@ -10,6 +10,7 @@ This project demonstrates how to configure a remote backend for Terraform using 
 - Use of a specific key to store the state file in the S3 bucket.
 - Support for versioning and locking to prevent state corruption.
 - Integration with the AWS provider for resource management.
+- Practice with partial backend configuration using a `.tfbackend` file.
 
 ## Prerequisites
 
@@ -19,15 +20,31 @@ This project demonstrates how to configure a remote backend for Terraform using 
 
 ## Backend Configuration
 
-The backend is configured in the `provider.tf` file as follows:
+The backend is configured in two ways:
 
-```terraform
-backend "s3" {
-  bucket = "03-backend-bucket-shubhrajit"
-  key    = "04-backends/state.tfstate"
-  region = "us-east-1"
-}
-```
+1. **Inline Configuration** (in `provider.tf`):
+
+   ```terraform
+   backend "s3" {
+     bucket = "03-backend-bucket-shubhrajit"
+     key    = "04-backends/state.tfstate"
+     region = "us-east-1"
+   }
+   ```
+
+2. Partial Configuration (using a .tfbackend file): The prod.s3.tfbackend file contains the backend configuration for the production environment:
+
+    ```terraform
+    bucket = "03-backend-bucket-shubhrajit"
+    key    = "04-backends/deprodv/state.tfstate"
+    region = "us-east-1"
+    ```
+
+    To use this partial backend configuration, initialize Terraform with the -backend-config flag:
+
+    ```bash
+    terraform init -backend-config=prod.s3.tfbackend
+    ```
 
 ## Explanation
 
@@ -70,14 +87,16 @@ backend "s3" {
 
 ## Notes
 
-Ensure that the S3 bucket specified in the backend configuration exists before running terraform init.
-Use proper IAM permissions to allow Terraform to read and write to the S3 bucket.
-Always review the execution plan before applying changes to avoid unintended modifications.
+- Ensure that the S3 bucket specified in the backend configuration exists before running terraform init.
+- Use proper IAM permissions to allow Terraform to read and write to the S3 bucket.
+- Always review the execution plan before applying changes to avoid unintended modifications.
 
 ## Project Structure
 
 - provider.tf: Configures the AWS provider and the S3 backend for Terraform.
-- main.tf: Contains the main Terraform configuration (if applicable).
+- s3.tf: Contains the main Terraform resources
+- prod.s3.tfbackend: Contains the partial backend configuration for the production environment.
+- dev.s3.tfbackend: Contains the partial backend configuration for the development environment.
 
 ## License
 

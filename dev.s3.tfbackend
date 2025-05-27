@@ -1,0 +1,5 @@
+# For illustration of the partial backend code.
+
+bucket = "03-backend-bucket-shubhrajit"
+key    = "04-backends/dev/state.tfstate"
+region = "us-east-1"
